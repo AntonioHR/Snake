@@ -254,11 +254,14 @@ MonoBehaviour:
   matchBuilder: {fileID: 588069895}
   setup:
     size: {x: 15, y: 10}
-    closedByWalls: 1
-    foodSpawners: []
+    closedByWalls: 0
+    foodSpawners:
+    - blockAssetOptions:
+      - {fileID: 11400000, guid: c03dbcae147a80648827f12442b55d71, type: 2}
+      - {fileID: 11400000, guid: 6ebf81b64d0b2f2418a5b9af56b32d31, type: 2}
   players:
   - snakeSetup:
-      speed: 2
+      speed: 3
       startDirection: 1
       startPosition: {x: 5, y: 5}
       startBlocks:
@@ -346,6 +349,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   grid: {fileID: 1758396809}
   wallPiecePrefab: {fileID: 2065387576927618637, guid: 9b4a2c37ece002549bae2a63f9414f48, type: 3}
+  foodPiecePrefab: {fileID: 2806601416964446877, guid: bbda980f50a13ee46929fbb807f6f7e2, type: 3}
   snakeVisualsPrefab: {fileID: 4926651505825813697, guid: d1dec191f1ab7bd4cbc4cd21dc4620d8, type: 3}
   gameCamera: {fileID: 519420031}
 --- !u!4 &1216907641

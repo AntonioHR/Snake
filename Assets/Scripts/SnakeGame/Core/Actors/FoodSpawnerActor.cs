@@ -1,4 +1,5 @@
 ﻿using System;
+using UnityEngine;
 
 namespace SnakeGame
 {
@@ -7,10 +8,12 @@ namespace SnakeGame
         [Serializable]
         public class Setup
         {
-
+            public BlockAsset[] blockAssetOptions;
         }
+        public event Action FoodConsumed;
+        public event Action FoodSpawned;
 
-        private FoodPiece spawnedFood;
+        public FoodPiece currentFood { get; private set; }
 
         protected override void OnInitialize()
         {
@@ -22,17 +25,29 @@ namespace SnakeGame
             SpawnNextFood();
         }
 
+        public void CheckFoodSpawns()
+        {
+            if(currentFood == null)
+                SpawnNextFood();
+        }
         private void OnFoodEaten(FoodPiece foodPiece)
         {
-            if(foodPiece == this.spawnedFood)
+            if(foodPiece == this.currentFood)
             {
-                SpawnNextFood();
+                currentFood = null;
+                FoodConsumed?.Invoke();
             }
         }
 
         private void SpawnNextFood()
         {
-            throw new NotImplementedException();
+            Vector2Int pos = match.board.GetRandomEmptyPosition();
+            BlockAsset block = setup.blockAssetOptions[UnityEngine.Random.Range(0, setup.blockAssetOptions.Length)];
+            currentFood = new FoodPiece();
+            currentFood.blockType = block;
+            currentFood.spawner = this;
+            match.board.AttachPiece(pos, currentFood);
+            FoodSpawned?.Invoke();
         } 
     }
 }

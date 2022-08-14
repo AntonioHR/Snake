@@ -6,7 +6,7 @@ namespace JammerTools.StateMachines
     IStateMachine<TContext, TState>
     where TState : State<TContext, TState>
     {
-        protected TState CurrentState { get; private set; }
+        public TState CurrentState { get; private set; }
         public TContext Context { get; private set; }
         public abstract TState DefaultState { get; }
 

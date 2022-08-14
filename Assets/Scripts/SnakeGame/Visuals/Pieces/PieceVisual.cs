@@ -16,15 +16,23 @@ namespace SnakeGame
         public void Initialize(BoardVisuals board, T piece)
         {
             this.board = board;
+            SetPiece(piece);
+            OnInitialize();
+            OnPieceChanged();
+        }
+
+        public void SetPiece(T piece)
+        {
             this.piece = piece;
             SetPosition(piece.position);
 
             borderSprite.color = GetBorderColor();
             fillSprite.color = GetFillColor();
-            OnInitialize();
         }
 
         protected virtual void OnInitialize() { }
+
+        protected virtual void OnPieceChanged() { }
 
         public void SetPosition(Vector2 position)
         {

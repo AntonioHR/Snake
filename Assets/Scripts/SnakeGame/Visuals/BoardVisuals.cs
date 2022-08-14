@@ -2,6 +2,7 @@
 using JammerTools.Common.Grids;
 using System;
 using System.Collections;
+using System.Linq;
 using UnityEngine;
 
 namespace SnakeGame
@@ -13,27 +14,42 @@ namespace SnakeGame
         public WorldGrid grid;
         private Transform piecesParent;
         private Transform snakesParent;
+        private Transform foodParent;
         public GenericPieceVisual wallPiecePrefab;
+        public FoodPieceVisual foodPiecePrefab;
+
         public SnakeVisuals snakeVisualsPrefab;
+
         public Camera gameCamera;
+        private FoodVisualSpawner[] foodVisualSpawners;
+        private SnakeVisuals[] snakeVisuals;
 
         public void Initialize(SnakeGameMatch match)
         {
             this.match = match;
             piecesParent = transform.SpawnChild("[PIECES]");
             snakesParent = transform.SpawnChild("[SNAKES]");
+            foodParent = transform.SpawnChild("[FOOD]");
             SetupGrid();
             CenterCamera();
             SpawnWalls();
             SpawnSnakes();
+            SetupFoodSpawns();
         }
+
+        private void SetupFoodSpawns()
+        {
+            match.GetActors<FoodSpawnerActor>()
+                .Select(s => CreateFoodSpawner(s))
+                .ToArray();
+        }
+
 
         private void SpawnSnakes()
         {
-            foreach (var snakeActor in match.GetActors<SnakeActor>())
-            {
-                SpawnSnake(snakeActor);
-            }
+            snakeVisuals = match.GetActors<SnakeActor>()
+                .Select(s => SpawnSnake(s))
+                .ToArray();
         }
 
         private void SetupGrid()
@@ -54,14 +70,14 @@ namespace SnakeGame
 
         public void SpawnWalls()
         {
-            for (int i = 0; i < match.board.pieces.GetLength(0); i++)
+            for (int i = 0; i < match.board.Size.x; i++)
             {
-                for (int j = 0; j < match.board.pieces.GetLength(1); j++)
+                for (int j = 0; j < match.board.Size.y; j++)
                 {
-                    var piece = match.board.pieces[i, j];
+                    Piece piece = match.board.GetTopPiece(i, j);
                     if(piece is WallPiece)
                     {
-                        SpawnWallPiece(piece);
+                        SpawnWallPiece(piece as WallPiece);
                     }
                 }
             }
@@ -74,10 +90,17 @@ namespace SnakeGame
         }
 
 
-        private void SpawnSnake(SnakeActor snakeActor)
+        private SnakeVisuals SpawnSnake(SnakeActor snakeActor)
         {
             SnakeVisuals result = Instantiate(snakeVisualsPrefab, snakesParent);
             result.Initialize(this, snakeActor);
+            return result;
+        }
+        private FoodVisualSpawner CreateFoodSpawner(FoodSpawnerActor actor)
+        {
+            var result = foodParent.SpawnChild<FoodVisualSpawner>("Food Spawn");
+            result.Initialize(this, actor);
+            return result;
         }
     }
 }

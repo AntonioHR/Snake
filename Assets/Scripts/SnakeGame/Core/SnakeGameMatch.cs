@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace SnakeGame
 {
-    public class SnakeGameMatch : MonoBehaviour
+    public partial class SnakeGameMatch : MonoBehaviour
     {
         #region Nested Classes
         [Serializable]
@@ -18,7 +18,6 @@ namespace SnakeGame
 
             public FoodSpawnerActor.Setup[] foodSpawners;
             public PlayerActor.Setup[] playersSetup { get; set; }
-            //public SnakeSpa playerSnakeSpawners;
         }
         #endregion
 
@@ -27,12 +26,13 @@ namespace SnakeGame
 
         //State
         public List<Actor> actors;
+        private StateMachine stateMachine;
+        public SnakeMover snakeMover;
         public Board board;
 
         //References
         private Setup setup;
         private Transform actorsParent;
-        private bool running;
 
 
         #region Unity Messages
@@ -40,20 +40,31 @@ namespace SnakeGame
         {
             actorsParent = transform.SpawnChild("[ACTORS]");
             actors = new List<Actor>();
+            snakeMover = new SnakeMover(this);
+            stateMachine = new StateMachine();
+            stateMachine.Begin(this);
         }
         public void Update()
         {
-            if(running)
-                UpdateActors();
+            stateMachine.CurrentState.Update();
         }
 
         #endregion
 
 
+        public void OnHitsHappened()
+        {
+
+        }
+
+        public void OnPieceEaten(FoodPiece foodPiece)
+        {
+            FoodEaten?.Invoke(foodPiece);
+        }
 
         public void Begin()
         {
-            running = true;
+            stateMachine.CurrentState.OnGameStart();
             foreach (var actor in actors)
             {
                 actor.OnMatchStart();

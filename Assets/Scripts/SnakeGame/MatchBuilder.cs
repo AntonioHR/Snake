@@ -39,6 +39,10 @@ namespace SnakeGame
             {
                 PlayerActor actor = match.SpawnActor<PlayerActor, PlayerActor.Setup>(s);
             }
+            foreach (FoodSpawnerActor.Setup s in setup.foodSpawners)
+            {
+                FoodSpawnerActor actor = match.SpawnActor<FoodSpawnerActor, FoodSpawnerActor.Setup>(s);
+            }
         }
 
         private void InitializeBoard()
