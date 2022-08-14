@@ -45,7 +45,23 @@ namespace SnakeGame
 
         public Board GetSnapshot()
         {
-            return (Board) MemberwiseClone();
+            Board result = (Board) MemberwiseClone();
+
+            result.pieces = new List<Piece>[Size.x, Size.y];
+            for (int i = 0; i < Size.x; i++)
+            {
+                for (int j = 0; j < Size.y; j++)
+                {
+                    result.pieces[i, j] = new List<Piece>();
+                    foreach (var piece in result.pieces[i,j])
+                    {
+                        result.pieces[i, j].Add((Piece)piece.Clone());
+                    }
+                }
+
+            }
+
+            return result;
         }
 
         public void AttachPiece(Vector2Int pos, Piece piece, bool canStack = false) => AttachPiece(pos.x, pos.y, piece, canStack);

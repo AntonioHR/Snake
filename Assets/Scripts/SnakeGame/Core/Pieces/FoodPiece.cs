@@ -7,5 +7,10 @@ namespace SnakeGame
         public BlockAsset blockType;
 
         public FoodSpawnerActor spawner;
+
+        public override object Clone()
+        {
+            return MemberwiseClone();
+        }
     }
 }
