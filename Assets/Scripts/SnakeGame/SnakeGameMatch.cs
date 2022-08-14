@@ -54,6 +54,10 @@ namespace SnakeGame
         public void Begin()
         {
             running = true;
+            foreach (var actor in actors)
+            {
+                actor.OnMatchStart();
+            }
         }
 
         public T[] GetActors<T>() where T: Actor

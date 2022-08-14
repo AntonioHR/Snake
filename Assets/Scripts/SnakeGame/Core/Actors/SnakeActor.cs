@@ -10,6 +10,7 @@ namespace SnakeGame
         [Serializable]
         public class Setup
         {
+            public float speed = 1.5f;
             public Direction startDirection;
             public Vector2Int startPosition;
             public BlockAsset[] startBlocks;
@@ -30,7 +31,12 @@ namespace SnakeGame
             }
         }
 
+        public event Action Moved;
+
+        private RefreshTimer moveTimer;
+
         private List<SnakeSegmentPiece> _pieces;
+        private SnakeSegmentPiece head => _pieces[0];
 
         public SnakeSegmentPiece this[int i] => _pieces[i];
         public int Length => _pieces.Count;
@@ -39,11 +45,45 @@ namespace SnakeGame
 
         public IEnumerable<SnakeSegmentPiece> GetPieces() => _pieces.AsReadOnly();
 
-        public Direction moveDirection;
+        public Direction moveDirection { get; private set; }
+        public Vector2Int lookVector => head.position - head.next.position;
+
+        public override void Tick()
+        {
+            if(moveTimer.Check())
+            {
+                Move();
+            }
+        }
+
+        private void Move()
+        {
+            Vector2Int pos = head.position + moveDirection.ToVector();
+            Piece target = match.board.GetPiece(pos);
+            if(target == null)
+            {
+                ExecuteMovement();
+                Moved?.Invoke();
+            }
+        }
+
+        private void ExecuteMovement()
+        {
+            Vector2Int nextPos = head.position + moveDirection.ToVector();
+            Board board = match.board;
+            foreach (var piece in _pieces)
+            {
+                Vector2Int currentPos = piece.position;
+                board.Detatch(piece);
+                board.AttachPiece(nextPos, piece);
+                nextPos = currentPos;
+            }
+        }
 
         public override void OnMatchStart()
         {
             //throw new System.NotImplementedException();
+            moveTimer = RefreshTimer.CreateAndStart(1 / setup.speed);
         }
 
         protected override void OnInitialize()
@@ -77,12 +117,16 @@ namespace SnakeGame
 
         public void FlipLeft()
         {
-            moveDirection = moveDirection.SpinCounterclockwise();
+            var target = moveDirection.SpinCounterclockwise();
+            if(target.ToVector() != -lookVector)
+                moveDirection = target;
         }
 
         public void FlipRight()
         {
-            moveDirection = moveDirection.SpinClockwise();
+            var target = moveDirection.SpinClockwise();
+            if (target.ToVector() != -lookVector)
+                moveDirection = target;
         }
     }
 

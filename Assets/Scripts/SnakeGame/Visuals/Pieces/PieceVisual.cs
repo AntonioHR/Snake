@@ -32,6 +32,12 @@ namespace SnakeGame
         }
 
 
+        public void RefreshPosition()
+        {
+            SetPosition(piece.position);
+        }
+
+
         protected abstract Color GetBorderColor();
         protected abstract Color GetFillColor();
     }

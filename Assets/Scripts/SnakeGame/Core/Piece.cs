@@ -6,4 +6,5 @@ namespace SnakeGame
     {
         public Vector2Int position;
     }
+
 }

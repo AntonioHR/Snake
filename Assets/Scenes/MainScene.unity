@@ -258,6 +258,7 @@ MonoBehaviour:
     foodSpawners: []
   players:
   - snakeSetup:
+      speed: 2
       startDirection: 1
       startPosition: {x: 5, y: 5}
       startBlocks:

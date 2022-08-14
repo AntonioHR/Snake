@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace SnakeGame
@@ -20,6 +21,16 @@ namespace SnakeGame
                 var pieceVisual = Instantiate(piecePrefab, transform);
                 pieceVisual.Initialize(board, piece);
                 pieces.Add(pieceVisual);
+            }
+
+            snake.Moved += OnMoved;
+        }
+
+        private void OnMoved()
+        {
+            foreach (var piece in pieces)
+            {
+                piece.RefreshPosition();
             }
         }
     }

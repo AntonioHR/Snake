@@ -12,6 +12,8 @@ namespace SnakeGame
 
         public Vector2Int Size { get; private set; }
 
+        public Piece GetPiece(Vector2Int pos) => pieces[pos.x, pos.y];
+
         public static Board BuildWithSize(Vector2Int size, bool closedByWalls)
         {
             var board = new Board()
@@ -46,12 +48,19 @@ namespace SnakeGame
             pieces[x, y] = piece;
             piece.position = new Vector2Int(x, y);
         }
-        public void Detatch(Vector2Int pos, Piece piece) => DetatchPiece(pos.x, pos.y);
+
+        public void Detatch(Piece piece)
+        {
+            Debug.Assert(GetPiece(piece.position) == piece);
+            Detatch(piece.position);
+        }
+        public void Detatch(Vector2Int pos) => DetatchPiece(pos.x, pos.y);
         public void DetatchPiece(int x, int y)
         {
             Debug.Assert(pieces[x, y] != null);
             pieces[x, y] = null;
 
         }
+
     }
 }
