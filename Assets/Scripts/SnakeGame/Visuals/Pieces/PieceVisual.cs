@@ -1,18 +1,19 @@
 ﻿using JammerTools.Common.Grids;
+using System;
 using UnityEngine;
 
 namespace SnakeGame
 {
-    public abstract class PieceVisual : MonoBehaviour
+    public abstract class PieceVisual<T> : MonoBehaviour where T: Piece
     {
         public SpriteRenderer borderSprite;
         public SpriteRenderer fillSprite;
 
+        protected SnakeGameMatch match => board.match;
+        protected BoardVisuals board { get; private set; }
+        protected T piece { get; private set; }
 
-        private BoardVisuals board;
-        private Piece piece;
-
-        public void Initialize(BoardVisuals board, Piece piece)
+        public void Initialize(BoardVisuals board, T piece)
         {
             this.board = board;
             this.piece = piece;
@@ -20,7 +21,10 @@ namespace SnakeGame
 
             borderSprite.color = GetBorderColor();
             fillSprite.color = GetFillColor();
+            OnInitialize();
         }
+
+        protected virtual void OnInitialize() { }
 
         public void SetPosition(Vector2 position)
         {

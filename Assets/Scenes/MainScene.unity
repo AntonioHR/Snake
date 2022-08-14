@@ -256,7 +256,17 @@ MonoBehaviour:
     size: {x: 15, y: 10}
     closedByWalls: 1
     foodSpawners: []
-    playersSetup: []
+  players:
+  - snakeSetup:
+      startDirection: 1
+      startPosition: {x: 5, y: 5}
+      startBlocks:
+      - {fileID: 11400000, guid: 8fbfb4c33ee911644b072c8334eb1bf1, type: 2}
+      - {fileID: 11400000, guid: 8fbfb4c33ee911644b072c8334eb1bf1, type: 2}
+      - {fileID: 11400000, guid: 8fbfb4c33ee911644b072c8334eb1bf1, type: 2}
+      color: {r: 0.384, g: 0.384, b: 0.384, a: 1}
+    leftKey: 97
+    rightKey: 100
   autoStart: 1
 --- !u!4 &588069897
 Transform:
@@ -335,6 +345,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   grid: {fileID: 1758396809}
   wallPiecePrefab: {fileID: 2065387576927618637, guid: 9b4a2c37ece002549bae2a63f9414f48, type: 3}
+  snakeVisualsPrefab: {fileID: 4926651505825813697, guid: d1dec191f1ab7bd4cbc4cd21dc4620d8, type: 3}
   gameCamera: {fileID: 519420031}
 --- !u!4 &1216907641
 Transform:

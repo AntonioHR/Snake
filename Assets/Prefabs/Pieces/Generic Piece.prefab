@@ -43,13 +43,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 4711115522232899884}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6b1b7fa5ebb694743bffdf68ec49db67, type: 3}
+  m_Script: {fileID: 11500000, guid: 440e6b28798e9bf48856cadbe3ad178d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   borderSprite: {fileID: 7066114455848224034}
   fillSprite: {fileID: 4490169508100175853}
-  borderColor: {r: 1, g: 0.058823533, b: 0.6627451, a: 1}
-  fillColor: {r: 0, g: 0.94117653, b: 1, a: 1}
+  borderColor: {r: 1, g: 1, b: 1, a: 1}
+  fillColor: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &6716649879425368374
 GameObject:
   m_ObjectHideFlags: 0

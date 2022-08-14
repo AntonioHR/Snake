@@ -8,7 +8,7 @@ namespace SnakeGame
     {
         private Board() { }
         
-        public Piece[,] pieces;
+        public Piece[,] pieces { get; private set; }
 
         public Vector2Int Size { get; private set; }
 
@@ -39,10 +39,19 @@ namespace SnakeGame
             return board;
         }
 
-        private void AttachPiece(int x, int y, Piece piece)
+        public void AttachPiece(Vector2Int pos, Piece piece) => AttachPiece(pos.x, pos.y, piece);
+        public void AttachPiece(int x, int y, Piece piece)
         {
+            Debug.Assert(pieces[x, y] == null);
             pieces[x, y] = piece;
             piece.position = new Vector2Int(x, y);
+        }
+        public void Detatch(Vector2Int pos, Piece piece) => DetatchPiece(pos.x, pos.y);
+        public void DetatchPiece(int x, int y)
+        {
+            Debug.Assert(pieces[x, y] != null);
+            pieces[x, y] = null;
+
         }
     }
 }

@@ -12,16 +12,28 @@ namespace SnakeGame
 
         public WorldGrid grid;
         private Transform piecesParent;
+        private Transform snakesParent;
         public GenericPieceVisual wallPiecePrefab;
+        public SnakeVisuals snakeVisualsPrefab;
         public Camera gameCamera;
 
         public void Initialize(SnakeGameMatch match)
         {
             this.match = match;
             piecesParent = transform.SpawnChild("[PIECES]");
+            snakesParent = transform.SpawnChild("[SNAKES]");
             SetupGrid();
-            SpawnWalls();
             CenterCamera();
+            SpawnWalls();
+            SpawnSnakes();
+        }
+
+        private void SpawnSnakes()
+        {
+            foreach (var snakeActor in match.GetActors<SnakeActor>())
+            {
+                SpawnSnake(snakeActor);
+            }
         }
 
         private void SetupGrid()
@@ -59,6 +71,13 @@ namespace SnakeGame
         {
             var result = Instantiate(wallPiecePrefab, piecesParent);
             result.Initialize(this, piece);
+        }
+
+
+        private void SpawnSnake(SnakeActor snakeActor)
+        {
+            SnakeVisuals result = Instantiate(snakeVisualsPrefab, snakesParent);
+            result.Initialize(this, snakeActor);
         }
     }
 }

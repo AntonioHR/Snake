@@ -1,6 +1,9 @@
-﻿namespace SnakeGame
+﻿using UnityEngine;
+
+namespace SnakeGame
 {
-    public class BlockAsset
+    public abstract class BlockAsset : ScriptableObject
     {
+        public Color color;
     }
 }

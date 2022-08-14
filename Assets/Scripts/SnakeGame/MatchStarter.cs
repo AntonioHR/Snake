@@ -10,6 +10,7 @@ namespace SnakeGame
         private SnakeGameMatch match;
 
         public SnakeGameMatch.Setup setup;
+        public PlayerActor.Setup[] players;
         public bool autoStart;
 
 
@@ -17,6 +18,7 @@ namespace SnakeGame
         {
             if(autoStart)
             {
+                setup.playersSetup = players;
                 match = matchBuilder.Build(setup);
                 match.Begin();
             }

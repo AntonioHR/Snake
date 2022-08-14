@@ -14,6 +14,15 @@ namespace Common
             _ => throw new System.NotImplementedException(),
         };
 
+        public static Direction Invert(Direction direction) => direction switch
+        {
+            Direction.Up => Direction.Down,
+            Direction.Right => Direction.Left,
+            Direction.Down => Direction.Up,
+            Direction.Left => Direction.Right,
+            _ => throw new System.NotImplementedException(),
+        };
+
         public static Direction SpinCounterclockwise(this Direction direction) => direction switch
         {
             Direction.Up => Direction.Left,

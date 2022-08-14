@@ -1,6 +1,7 @@
 ﻿using Common;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 
@@ -16,7 +17,7 @@ namespace SnakeGame
             public bool closedByWalls = true;
 
             public FoodSpawnerActor.Setup[] foodSpawners;
-            public PlayerActor.Setup[] playersSetup;
+            public PlayerActor.Setup[] playersSetup { get; set; }
             //public SnakeSpa playerSnakeSpawners;
         }
         #endregion
@@ -31,16 +32,19 @@ namespace SnakeGame
         //References
         private Setup setup;
         private Transform actorsParent;
+        private bool running;
 
 
         #region Unity Messages
         private void Awake()
         {
             actorsParent = transform.SpawnChild("[ACTORS]");
+            actors = new List<Actor>();
         }
         public void Update()
         {
-            UpdateActors();
+            if(running)
+                UpdateActors();
         }
 
         #endregion
@@ -49,9 +53,13 @@ namespace SnakeGame
 
         public void Begin()
         {
-            throw new NotImplementedException();
+            running = true;
         }
 
+        public T[] GetActors<T>() where T: Actor
+        {
+            return actors.OfType<T>().ToArray();
+        }
 
         public TActor SpawnActor<TActor, TSetup>(TSetup s) where TActor : Actor<TSetup>
         {
