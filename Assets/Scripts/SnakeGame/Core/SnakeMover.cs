@@ -29,7 +29,7 @@ namespace SnakeGame
             Board boardSnapshot = null;
             
             if(CheckCouldEatTimePowerup())
-                boardSnapshot= match.board.GetSnapshot();
+                boardSnapshot = match.board.GetSnapshot();
 
             foreach (var snake in movementQueue)
             {

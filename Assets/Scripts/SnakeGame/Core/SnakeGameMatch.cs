@@ -22,6 +22,7 @@ namespace SnakeGame
         #endregion
 
         //Events
+        public event Action GameOver;
         public event Action<FoodPiece> FoodEaten;
 
         //State
@@ -54,7 +55,21 @@ namespace SnakeGame
 
         public void OnHitsHappened()
         {
+            bool playerDead = false;
+            foreach (var snake in GetActors<SnakeActor>())
+            {
+                if(snake.WasHit)
+                {
+                    if(snake.owner is PlayerActor)
+                    {
+                        playerDead = true;
+                    }
 
+                    snake.OnDead();
+                }
+            }
+            if(playerDead)
+                stateMachine.CurrentState.OnAfterPlayerDeath();
         }
 
         public void OnPieceEaten(FoodPiece foodPiece)

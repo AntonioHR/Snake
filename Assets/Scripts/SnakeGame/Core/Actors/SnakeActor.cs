@@ -31,6 +31,7 @@ namespace SnakeGame
             }
         }
 
+        public event Action Died;
         public event Action Hit;
         public event Action Moved;
         public event Action PiecesChanged;
@@ -47,6 +48,7 @@ namespace SnakeGame
         public int Length => _pieces.Count;
 
         public Color Color => setup.color;
+        public ISnakeOwner owner { get; set; }
 
         public IEnumerable<SnakeSegmentPiece> GetPieces() => _pieces.AsReadOnly();
 
@@ -56,6 +58,7 @@ namespace SnakeGame
         public Vector2Int lookVector => head.position - head.next.position;
 
         public bool WasHit { get; private set; }
+        public bool IsAlive { get; private set; }
 
         public override void Tick()
         {
@@ -77,6 +80,16 @@ namespace SnakeGame
             moveTimer = RefreshTimer.CreateAndStart(1 / setup.speed);
         }
 
+        public void OnDead()
+        {
+            foreach (var piece in _pieces)
+            {
+                match.board.Detatch(piece);
+            }
+            IsAlive = false;
+            Died?.Invoke();
+            owner.OnSnakeDead();
+        }
         public void OnMoved()
         {
             Moved?.Invoke();
@@ -93,7 +106,7 @@ namespace SnakeGame
             RefreshPieceIndices();
             PiecesChanged?.Invoke();
         }
-        internal void ReplacePiece(int index, BlockAsset consumedVersion)
+        public void ReplacePiece(int index, BlockAsset consumedVersion)
         {
             _pieces[index].block = consumedVersion;
             SinglePieceChanged?.Invoke(index);
@@ -110,6 +123,7 @@ namespace SnakeGame
         protected override void OnInitialize()
         {
             moveDirection = setup.startDirection;
+            IsAlive = true;
 
             BuildSnake();
 

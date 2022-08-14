@@ -8,6 +8,7 @@ namespace SnakeGame
     {
         public Transform matchTarget;
         public BoardVisuals visuals;
+        public SnakeUI ui;
 
 
         private SnakeGameMatch match;
@@ -20,7 +21,13 @@ namespace SnakeGame
             this.setup = setup;
             InitializeMatch();
             InitializeVisuals();
+            IntializeUI();
             return match;
+        }
+
+        private void IntializeUI()
+        {
+            ui.Initialize(match);
         }
 
         private void InitializeVisuals()

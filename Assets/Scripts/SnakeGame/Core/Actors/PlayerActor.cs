@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace SnakeGame
 {
-    public class PlayerActor : Actor<PlayerActor.Setup>
+    public class PlayerActor : Actor<PlayerActor.Setup>, ISnakeOwner
     {
         [Serializable]
         public class Setup
@@ -13,7 +13,7 @@ namespace SnakeGame
             public KeyCode rightKey;
         }
 
-        private SnakeActor snake;
+        public SnakeActor snake { get; private set; }
 
         public override void OnMatchStart()
         {
@@ -22,6 +22,7 @@ namespace SnakeGame
         protected override void OnInitialize()
         {
             snake = match.SpawnActor<SnakeActor, SnakeActor.Setup>(setup.snakeSetup);
+            snake.owner = this;
         }
 
         public override void Tick()
@@ -38,6 +39,9 @@ namespace SnakeGame
             }
         }
 
+        public void OnSnakeDead()
+        {
+        }
     }
 
 }

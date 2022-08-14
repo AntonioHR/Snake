@@ -2,8 +2,10 @@
 
 namespace SnakeGame
 {
-    public class AISnakeSpawnerActor : Actor<AISnakeSpawnerActor.Setup>
+    public class AISnakeSpawnerActor : Actor<AISnakeSpawnerActor.Setup>, ISnakeOwner
     {
+        public SnakeActor snake { get; private set; }
+
         [Serializable]
         public class Setup
         {
@@ -20,6 +22,10 @@ namespace SnakeGame
             throw new System.NotImplementedException();
         }
 
+
+        public void OnSnakeDead()
+        {
+        }
     }
 
 }

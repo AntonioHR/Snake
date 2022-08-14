@@ -1,6 +1,7 @@
 ﻿using JammerTools.StateMachines;
 using System;
 using System.Collections;
+using System.Linq;
 using UnityEngine;
 
 namespace SnakeGame
@@ -10,6 +11,7 @@ namespace SnakeGame
         public class StateMachine : StateMachine<SnakeGameMatch, State>
         {
             public override State DefaultState => new PreGameState();
+
         }
 
         public abstract class State : State<SnakeGameMatch, State>
@@ -17,6 +19,11 @@ namespace SnakeGame
             public virtual void Update() { }
 
             public virtual void OnGameStart()
+            {
+                throw new InvalidOperationException();
+            }
+
+            public virtual void OnAfterPlayerDeath()
             {
                 throw new InvalidOperationException();
             }
@@ -45,7 +52,23 @@ namespace SnakeGame
                     foodSpawner.CheckFoodSpawns();
                 }
             }
+            public override void OnAfterPlayerDeath()
+            {
+                int alivePlayers = Context.GetActors<PlayerActor>().Where(p => p.snake.IsAlive).Count();
+                if(alivePlayers <= 0)
+                {
+                    ExitTo(new GameEndedState());
+                }
+            }
+        }
+        public class GameEndedState : State
+        {
+            protected override void Begin()
+            {
+                Context.GameOver?.Invoke();
+            }
         }
 
     }
+
 }
