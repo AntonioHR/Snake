@@ -7,6 +7,8 @@ namespace SnakeGame
     {
         public Vector2Int position;
 
+        public virtual bool IsHazard => true;
+
         public abstract object Clone();
     }
 

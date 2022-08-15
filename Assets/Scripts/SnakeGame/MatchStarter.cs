@@ -11,6 +11,7 @@ namespace SnakeGame
 
         public SnakeGameMatch.Setup setup;
         public PlayerActor.Setup[] players;
+        public AISnakeSpawnerActor.Setup[] aiSnakes;
         public bool autoStart;
 
 
@@ -19,6 +20,7 @@ namespace SnakeGame
             if(autoStart)
             {
                 setup.playersSetup = players;
+                setup.aiSnakes = aiSnakes;
                 match = matchBuilder.Build(setup);
                 match.Begin();
             }

@@ -309,7 +309,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 5
+  orthographic size: 10
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -387,7 +387,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   matchBuilder: {fileID: 588069895}
   setup:
-    size: {x: 15, y: 10}
+    size: {x: 30, y: 20}
     closedByWalls: 0
     foodSpawners:
     - blockAssetOptions:
@@ -405,6 +405,18 @@ MonoBehaviour:
       color: {r: 0.384, g: 0.384, b: 0.384, a: 1}
     leftKey: 97
     rightKey: 100
+  aiSnakes:
+  - snakeSetup:
+      speed: 3
+      startDirection: 3
+      startPosition: {x: 10, y: 7}
+      startBlocks:
+      - {fileID: 11400000, guid: 8fbfb4c33ee911644b072c8334eb1bf1, type: 2}
+      - {fileID: 11400000, guid: 8fbfb4c33ee911644b072c8334eb1bf1, type: 2}
+      - {fileID: 11400000, guid: 8fbfb4c33ee911644b072c8334eb1bf1, type: 2}
+      color: {r: 0.745283, g: 0, b: 0, a: 1}
+    foodSpawnerIndex: 0
+    thinkInterval: 0.1
   autoStart: 1
 --- !u!4 &588069897
 Transform:

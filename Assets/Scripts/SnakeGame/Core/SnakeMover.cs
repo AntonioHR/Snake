@@ -90,7 +90,7 @@ namespace SnakeGame
 
         private void ExecuteMovementOrEat(SnakeActor snake)
         {
-            Vector2Int targetPos = snake.head.position + snake.moveDirection.ToVector();
+            Vector2Int targetPos = snake.head.position + snake.moveDirection;
             targetPos = match.board.WrapPosition(targetPos);
 
             Piece target = match.board.GetTopPiece(targetPos);
@@ -105,7 +105,7 @@ namespace SnakeGame
         }
         private Piece GetTargetPieceFor(SnakeActor snake)
         {
-            Vector2Int targetPos = snake.head.position + snake.moveDirection.ToVector();
+            Vector2Int targetPos = snake.head.position + snake.moveDirection;
             targetPos = match.board.WrapPosition(targetPos);
 
             return match.board.GetTopPiece(targetPos);

@@ -46,6 +46,10 @@ namespace SnakeGame
             {
                 PlayerActor actor = match.SpawnActor<PlayerActor, PlayerActor.Setup>(s);
             }
+            foreach (AISnakeSpawnerActor.Setup s in setup.aiSnakes)
+            {
+                AISnakeSpawnerActor actor = match.SpawnActor<AISnakeSpawnerActor, AISnakeSpawnerActor.Setup>(s);
+            }
             foreach (FoodSpawnerActor.Setup s in setup.foodSpawners)
             {
                 FoodSpawnerActor actor = match.SpawnActor<FoodSpawnerActor, FoodSpawnerActor.Setup>(s);

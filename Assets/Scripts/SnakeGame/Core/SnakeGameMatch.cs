@@ -18,6 +18,7 @@ namespace SnakeGame
 
             public FoodSpawnerActor.Setup[] foodSpawners;
             public PlayerActor.Setup[] playersSetup { get; set; }
+            public AISnakeSpawnerActor.Setup[] aiSnakes { get; set; }
         }
         #endregion
 

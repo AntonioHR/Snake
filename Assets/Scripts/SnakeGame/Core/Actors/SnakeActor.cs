@@ -1,6 +1,7 @@
 ﻿using Common;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace SnakeGame
@@ -31,6 +32,14 @@ namespace SnakeGame
             }
         }
 
+        public Piece GetFacingPiece()
+        {
+            Vector2Int targetPos = head.position + moveDirection;
+            targetPos = match.board.WrapPosition(targetPos);
+
+            return match.board.GetTopPiece(targetPos);
+        }
+
         public event Action Died;
         public event Action Hit;
         public event Action Moved;
@@ -54,8 +63,32 @@ namespace SnakeGame
 
         
 
-        public Direction moveDirection { get; private set; }
-        public Vector2Int lookVector => head.position - head.next.position;
+        public Vector2Int moveDirection { get; private set; }
+        public Vector2Int lookVector
+        {
+            get
+            {
+                var result = head.position - head.next.position;
+                //If magnitude is greater than zero, this means it's wrapped around the board
+                if (result.magnitude > 1)
+                {
+                    //Normalized it and flip it
+                    result = new Vector2Int((int)(result.x / result.magnitude), (int)(result.y / result.magnitude));
+                    result = -result;
+                }
+                return result;
+            }
+        }
+
+        public IEnumerable<Vector2Int> GetDirectionOptions()=> new[] { lookVector, lookVector.SpinClockwise(), lookVector.SpinCounterclockwise() };
+        public IEnumerable<Vector2Int> GetWrappedMovementOptions()
+        {
+            return GetDirectionOptions().Select(dir=>
+            {
+                Vector2Int targetPos = head.position + dir;
+                return match.board.WrapPosition(targetPos);
+            });
+        }
 
         public bool WasHit { get; private set; }
         public bool IsAlive { get; private set; }
@@ -122,7 +155,7 @@ namespace SnakeGame
 
         protected override void OnInitialize()
         {
-            moveDirection = setup.startDirection;
+            moveDirection = setup.startDirection.ToVector();
             IsAlive = true;
 
             BuildSnake();
@@ -149,18 +182,25 @@ namespace SnakeGame
                 _pieces.Add(piece);
             }
         }
+        public void SetMoveDirection(Vector2Int direction)
+        {
+            Debug.Assert(direction.magnitude == 1);
+
+            this.moveDirection = direction;
+
+        }
 
         public void FlipLeft()
         {
             var target = moveDirection.SpinCounterclockwise();
-            if(target.ToVector() != -lookVector)
+            if(target != -lookVector)
                 moveDirection = target;
         }
 
         public void FlipRight()
         {
             var target = moveDirection.SpinClockwise();
-            if (target.ToVector() != -lookVector)
+            if (target != -lookVector)
                 moveDirection = target;
         }
     }
