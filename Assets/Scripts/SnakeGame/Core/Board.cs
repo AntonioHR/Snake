@@ -12,6 +12,8 @@ namespace SnakeGame
 
         private List<Piece>[,] pieces;
 
+        private List<BoardStateObject> stateObjects = new List<BoardStateObject>();
+
         public Vector2Int Size { get; private set; }
 
         public Piece GetTopPiece(Vector2Int pos) => GetTopPiece(pos.x, pos.y);
@@ -58,7 +60,11 @@ namespace SnakeGame
                         result.pieces[i, j].Add((Piece)piece.Clone());
                     }
                 }
-
+            }
+            result.stateObjects = new List<BoardStateObject>();
+            foreach (var item in stateObjects)
+            {
+                result.stateObjects.Add(item);
             }
 
             return result;
@@ -118,6 +124,16 @@ namespace SnakeGame
             if (!pieces[x,y].Any())
                 OccupiedSlots--;
         }
+
+        public void AddStateObject(BoardStateObject stateObject)
+        {
+            stateObjects.Add(stateObject);
+        }
+        public IEnumerable<T> GetStateObjects<T>() where T: BoardStateObject
+        {
+            return stateObjects.OfType<T>();
+        }
+
 
     }
 }

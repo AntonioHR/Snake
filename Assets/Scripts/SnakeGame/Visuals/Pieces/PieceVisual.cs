@@ -1,5 +1,7 @@
-﻿using JammerTools.Common.Grids;
+﻿using DG.Tweening;
+using JammerTools.Common.Grids;
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace SnakeGame
@@ -9,13 +11,18 @@ namespace SnakeGame
         public SpriteRenderer borderSprite;
         public SpriteRenderer fillSprite;
 
+
         protected SnakeGameMatch match => board.match;
         protected BoardVisuals board { get; private set; }
+
+        protected SpriteRenderer[] allSprites;
+
         protected T piece { get; private set; }
 
         public void Initialize(BoardVisuals board, T piece)
         {
             this.board = board;
+            allSprites = GetComponentsInChildren<SpriteRenderer>();
             SetPiece(piece);
             OnInitialize();
             OnPieceChanged();
@@ -25,7 +32,11 @@ namespace SnakeGame
         {
             this.piece = piece;
             SetPosition(piece.position);
+            RefreshColors();
+        }
 
+        public void RefreshColors()
+        {
             borderSprite.color = GetBorderColor();
             fillSprite.color = GetFillColor();
         }
@@ -45,6 +56,16 @@ namespace SnakeGame
             SetPosition(piece.position);
         }
 
+        protected const float fadeTime = .5f;
+        public void FadeOutAndDestroy()
+        {
+            Sequence seq = DOTween.Sequence();
+            foreach (var sprite in allSprites)
+            {
+                seq.Join(sprite.DOFade(0, fadeTime));
+            }
+            seq.OnComplete(() => Destroy(gameObject));
+        }
 
         protected abstract Color GetBorderColor();
         protected abstract Color GetFillColor();

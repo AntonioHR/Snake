@@ -403,6 +403,8 @@ MonoBehaviour:
       - {fileID: 11400000, guid: 8fbfb4c33ee911644b072c8334eb1bf1, type: 2}
       - {fileID: 11400000, guid: 8fbfb4c33ee911644b072c8334eb1bf1, type: 2}
       color: {r: 0.384, g: 0.384, b: 0.384, a: 1}
+      respawnInvincibility:
+        defaultDuration: 1
     leftKey: 97
     rightKey: 100
   aiSnakes:
@@ -415,8 +417,13 @@ MonoBehaviour:
       - {fileID: 11400000, guid: 8fbfb4c33ee911644b072c8334eb1bf1, type: 2}
       - {fileID: 11400000, guid: 8fbfb4c33ee911644b072c8334eb1bf1, type: 2}
       color: {r: 0.745283, g: 0, b: 0, a: 1}
+      respawnInvincibility:
+        defaultDuration: 1.5
+    respawnTimer:
+      defaultDuration: 3
     foodSpawnerIndex: 0
     thinkInterval: 0.1
+    evadeEnabled: 0
   autoStart: 1
 --- !u!4 &588069897
 Transform:

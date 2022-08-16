@@ -6,6 +6,7 @@
 
         public SnakeActor snake;
         public int snakeIndex;
+        public override bool IsHazard => !snake.IsGhostly;
         public bool isHead => snakeIndex == 0;
         public bool isTail => snakeIndex == snake.Length;
         public SnakeSegmentPiece next => isTail? null : snake[snakeIndex + 1];

@@ -16,6 +16,7 @@ namespace SnakeGame
             public Vector2Int startPosition;
             public BlockAsset[] startBlocks;
             public Color color = Color.white;
+            public TimerActor.Setup respawnGhostTimer;
 
             public Vector2Int[] GeneratePositions()
             {
@@ -45,7 +46,9 @@ namespace SnakeGame
         public event Action Moved;
         public event Action PiecesChanged;
         public event Action<int> SinglePieceChanged;
+        public event Action<bool> GhostlyChanged;
 
+        private TimerActor ghostlyTimer;
         private RefreshTimer moveTimer;
 
         private List<SnakeSegmentPiece> _pieces;
@@ -64,6 +67,9 @@ namespace SnakeGame
         
 
         public Vector2Int moveDirection { get; private set; }
+
+        private Vector2Int startPosition;
+
         public Vector2Int lookVector
         {
             get
@@ -92,13 +98,49 @@ namespace SnakeGame
 
         public bool WasHit { get; private set; }
         public bool IsAlive { get; private set; }
+        public bool IsGhostly { get; private set; }
+        
+        
+        protected override void OnInitialize()
+        {
+            moveDirection = setup.startDirection.ToVector();
+            startPosition = setup.startPosition;
+            ghostlyTimer = match.SpawnActor<TimerActor, TimerActor.Setup>(setup.respawnGhostTimer);
+            IsAlive = true;
 
+            BuildSnake();
+
+        }
+        public override void OnMatchStart()
+        {
+            //throw new System.NotImplementedException();
+            moveTimer = RefreshTimer.CreateAndStart(1 / setup.speed);
+        }
         public override void Tick()
         {
-            if(moveTimer.Check())
+            if(IsAlive && moveTimer.Check())
             {
                 match.snakeMover.EnqueueForMovement(this);
             }
+            if(IsGhostly && ghostlyTimer.IsOver)
+            {
+                IsGhostly = false;
+                GhostlyChanged?.Invoke(false);
+            }
+        }
+
+
+
+        public void RespawnAt(Vector2Int startPosition)
+        {
+            _pieces.Clear();
+            moveTimer.Restart();
+            this.startPosition = startPosition;
+            this.moveDirection = setup.startDirection.ToVector();
+            BuildSnake();
+            IsAlive = true;
+            PiecesChanged?.Invoke();
+            StartGhostly();
         }
 
         public void OnHit()
@@ -106,13 +148,6 @@ namespace SnakeGame
             WasHit = true;
             Hit?.Invoke();
         }
-
-        public override void OnMatchStart()
-        {
-            //throw new System.NotImplementedException();
-            moveTimer = RefreshTimer.CreateAndStart(1 / setup.speed);
-        }
-
         public void OnDead()
         {
             foreach (var piece in _pieces)
@@ -128,6 +163,28 @@ namespace SnakeGame
             Moved?.Invoke();
         }
 
+        //Movement
+        public void SetMoveDirection(Vector2Int direction)
+        {
+            Debug.Assert(direction.magnitude == 1);
+
+            this.moveDirection = direction;
+
+        }
+        public void FlipLeft()
+        {
+            var target = moveDirection.SpinCounterclockwise();
+            if (target != -lookVector)
+                moveDirection = target;
+        }
+        public void FlipRight()
+        {
+            var target = moveDirection.SpinClockwise();
+            if (target != -lookVector)
+                moveDirection = target;
+        }
+
+        //Pieces
         public void CreateNewHead(BlockAsset type, Vector2Int position)
         {
             var newPiece = new SnakeSegmentPiece();
@@ -153,13 +210,12 @@ namespace SnakeGame
             }
         }
 
-        protected override void OnInitialize()
+
+        private void StartGhostly()
         {
-            moveDirection = setup.startDirection.ToVector();
-            IsAlive = true;
-
-            BuildSnake();
-
+            ghostlyTimer.Restart();
+            IsGhostly = true;
+            GhostlyChanged?.Invoke(true);
         }
 
         private void BuildSnake()
@@ -177,32 +233,12 @@ namespace SnakeGame
                 piece.snakeIndex = i;
                 piece.block = setup.startBlocks[i];
 
-                match.board.AttachPiece(positions[i], piece);
+                match.board.AttachPiece(positions[i], piece, canStack:true);
                 previous = piece;
                 _pieces.Add(piece);
             }
         }
-        public void SetMoveDirection(Vector2Int direction)
-        {
-            Debug.Assert(direction.magnitude == 1);
-
-            this.moveDirection = direction;
-
-        }
-
-        public void FlipLeft()
-        {
-            var target = moveDirection.SpinCounterclockwise();
-            if(target != -lookVector)
-                moveDirection = target;
-        }
-
-        public void FlipRight()
-        {
-            var target = moveDirection.SpinClockwise();
-            if (target != -lookVector)
-                moveDirection = target;
-        }
+       
     }
 
 }

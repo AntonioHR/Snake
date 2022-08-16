@@ -9,6 +9,7 @@ namespace SnakeGame
     {
         public SnakeActor snake { get; private set; }
 
+        private TimerActor respawnTimer;
         private RefreshTimer thinkTimer;
         private FoodSpawnerActor foodSpawner;
 
@@ -16,24 +17,51 @@ namespace SnakeGame
         public class Setup
         {
             public SnakeActor.Setup snakeSetup;
+            public TimerActor.Setup respawnTimer;
             public int foodSpawnerIndex = 0;
             public float thinkInterval = .1f;
+            public bool evadeEnabled = true;
         }
 
+        public override void OnMatchStart()
+        {
+            thinkTimer = RefreshTimer.CreateAndStart(setup.thinkInterval);
+            foodSpawner = match.GetActors<FoodSpawnerActor>()[setup.foodSpawnerIndex];
+        }
+
+        protected override void OnInitialize()
+        {
+            respawnTimer = match.SpawnActor<TimerActor, TimerActor.Setup>(setup.respawnTimer);
+            snake = match.SpawnActor<SnakeActor, SnakeActor.Setup>(setup.snakeSetup);
+            snake.owner = this;
+        }
         public override void Tick()
         {
             if(thinkTimer.Check())
             {
                 CheckPath();
             }
+            if(!snake.IsAlive && respawnTimer.IsOver)
+            {
+                Vector2Int targetPiece = match.board.GetRandomEmptyPosition();
+                snake.RespawnAt(targetPiece);
+            }
+        }
+
+
+        public void OnSnakeDead()
+        {
+            respawnTimer.Restart();
         }
 
         private void CheckPath()
         {
 
             snake.SetMoveDirection(FindBestDirection());
-            
+
         }
+        #region AI Helpers
+
         private Vector2Int FindBestDirection()
         {
             Vector2Int? result = CheckIfFacingFood();
@@ -41,12 +69,11 @@ namespace SnakeGame
                 return result.Value;
             return GetFreeRoamDirection();
         }
-
         private Vector2Int GetFreeRoamDirection()
         {
             Piece facedPiece = snake.GetFacingPiece();
             bool isFacingHazard = CheckHazard(facedPiece);
-            if (isFacingHazard)
+            if (isFacingHazard && setup.evadeEnabled)
             {
                 var directionOptions = snake
                     .GetDirectionOptions()
@@ -66,7 +93,6 @@ namespace SnakeGame
 
             return snake.moveDirection;
         }
-
         private Vector2Int? CheckIfFacingFood()
         {
             Piece targetedFood = foodSpawner.currentFood;
@@ -104,7 +130,6 @@ namespace SnakeGame
             }
             return null;
         }
-
         private int GetAlignedMoveDistance(Vector2Int from, Vector2Int to, Vector2Int direction)
         {
             //Project both onto the direction axis
@@ -129,12 +154,10 @@ namespace SnakeGame
                 return p2 - p1;
             }
         }
-
         private int Project(Vector2Int v, Vector2Int direction)
         {
             return v.x * Mathf.Abs(direction.x) + v.y * Mathf.Abs(direction.y);
         }
-
         private Piece GetPiece(Vector2Int pos)
         {
             pos = match.board.WrapPosition(pos);
@@ -144,23 +167,8 @@ namespace SnakeGame
         {
             return piece != null && piece.IsHazard && piece != snake.tail;
         }
+        #endregion
 
-        public override void OnMatchStart()
-        {
-            thinkTimer = RefreshTimer.CreateAndStart(setup.thinkInterval);
-            foodSpawner = match.GetActors<FoodSpawnerActor>()[setup.foodSpawnerIndex];
-        }
-
-        protected override void OnInitialize()
-        {
-            snake = match.SpawnActor<SnakeActor, SnakeActor.Setup>(setup.snakeSetup);
-            snake.owner = this;
-        }
-
-
-        public void OnSnakeDead()
-        {
-        }
     }
 
 }

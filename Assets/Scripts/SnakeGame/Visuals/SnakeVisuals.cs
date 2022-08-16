@@ -23,8 +23,19 @@ namespace SnakeGame
             }
 
             snake.Moved += OnMoved;
+            snake.Died += OnDied;
             snake.PiecesChanged += OnPiecesChanged;
             snake.SinglePieceChanged += OnSinglePieceChanged;
+            snake.GhostlyChanged += OnGhostlyChanged;
+        }
+
+        private void OnDied()
+        {
+            foreach (var piece in pieces)
+            {
+                piece.FadeOutAndDestroy();
+            }
+            pieces.Clear();
         }
 
         private void OnPiecesChanged()
@@ -64,6 +75,16 @@ namespace SnakeGame
             var piece = pieces[pieces.Count - 1];
             pieces.RemoveAt(pieces.Count - 1);
             Destroy(piece.gameObject);
+        }
+
+
+        private void OnGhostlyChanged(bool obj)
+        {
+            //Might do something in the future
+            foreach (var piece in pieces)
+            {
+                piece.RefreshColors();
+            }
         }
 
         private void OnMoved()

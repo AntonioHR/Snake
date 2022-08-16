@@ -39,9 +39,12 @@ namespace SnakeGame
             bool anyHit = false;
             foreach (var snake in movementQueue)
             {
-                if(CheckHit(snake))
+                if (!snake.IsGhostly)
                 {
-                    anyHit = true;
+                    if (CheckHit(snake))
+                    {
+                        anyHit = true;
+                    }
                 }
             }
 
@@ -66,7 +69,7 @@ namespace SnakeGame
             var head = snake.head;
             var pieces = match.board.GetPiecesAt(head.position);
 
-            if(pieces.Any(p=>p != head))
+            if(pieces.Any(p=>p != head && p.IsHazard))
             {
                 SnakeSegmentPiece ramSegment = snake.GetPieces().FirstOrDefault(p => p.block is BatteringRamBlockAsset);
                 if (ramSegment != null)
