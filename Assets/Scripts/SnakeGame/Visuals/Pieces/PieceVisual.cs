@@ -56,7 +56,7 @@ namespace SnakeGame
             SetPosition(piece.position);
         }
 
-        protected const float fadeTime = .5f;
+        protected const float fadeTime = 1.5f;
         public void FadeOutAndDestroy()
         {
             Sequence seq = DOTween.Sequence();

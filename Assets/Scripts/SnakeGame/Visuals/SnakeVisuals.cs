@@ -25,7 +25,7 @@ namespace SnakeGame
             snake.Moved += OnMoved;
             snake.Died += OnDied;
             snake.PiecesChanged += OnPiecesChanged;
-            snake.SinglePieceChanged += OnSinglePieceChanged;
+            snake.PieceReplaced += OnSinglePieceChanged;
             snake.GhostlyChanged += OnGhostlyChanged;
         }
 

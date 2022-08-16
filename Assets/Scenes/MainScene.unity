@@ -395,30 +395,20 @@ MonoBehaviour:
       - {fileID: 11400000, guid: 6ebf81b64d0b2f2418a5b9af56b32d31, type: 2}
   players:
   - snakeSetup:
-      speed: 3
-      startDirection: 1
-      startPosition: {x: 5, y: 5}
-      startBlocks:
-      - {fileID: 11400000, guid: 8fbfb4c33ee911644b072c8334eb1bf1, type: 2}
-      - {fileID: 11400000, guid: 8fbfb4c33ee911644b072c8334eb1bf1, type: 2}
-      - {fileID: 11400000, guid: 8fbfb4c33ee911644b072c8334eb1bf1, type: 2}
+      configsAsset: {fileID: 11400000, guid: b4a9e6715026f684faf4ce547f4f94fd, type: 2}
+      snakeTypeAsset: {fileID: 11400000, guid: 74a4b16e3f27ef743a12881949e56ee5, type: 2}
       color: {r: 0.384, g: 0.384, b: 0.384, a: 1}
-      respawnInvincibility:
-        defaultDuration: 1
+      startDirection: 1
+      startPosition: {x: 8, y: 5}
     leftKey: 97
     rightKey: 100
   aiSnakes:
   - snakeSetup:
-      speed: 3
+      configsAsset: {fileID: 11400000, guid: b4a9e6715026f684faf4ce547f4f94fd, type: 2}
+      snakeTypeAsset: {fileID: 11400000, guid: 74a4b16e3f27ef743a12881949e56ee5, type: 2}
+      color: {r: 0.745283, g: 0, b: 0, a: 1}
       startDirection: 3
       startPosition: {x: 10, y: 7}
-      startBlocks:
-      - {fileID: 11400000, guid: 8fbfb4c33ee911644b072c8334eb1bf1, type: 2}
-      - {fileID: 11400000, guid: 8fbfb4c33ee911644b072c8334eb1bf1, type: 2}
-      - {fileID: 11400000, guid: 8fbfb4c33ee911644b072c8334eb1bf1, type: 2}
-      color: {r: 0.745283, g: 0, b: 0, a: 1}
-      respawnInvincibility:
-        defaultDuration: 1.5
     respawnTimer:
       defaultDuration: 3
     foodSpawnerIndex: 0

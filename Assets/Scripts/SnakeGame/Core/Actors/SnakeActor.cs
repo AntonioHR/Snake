@@ -11,12 +11,16 @@ namespace SnakeGame
         [Serializable]
         public class Setup
         {
-            public float speed = 1.5f;
+            public SnakeConfigsAsset configsAsset;
+            public SnakeTypeAsset snakeTypeAsset;
+            public Color color = Color.white;
             public Direction startDirection;
             public Vector2Int startPosition;
-            public BlockAsset[] startBlocks;
-            public Color color = Color.white;
-            public TimerActor.Setup respawnGhostTimer;
+
+            public BlockAsset[] startBlocks => snakeTypeAsset.startingBlocks;
+            public TimerActor.Setup respawnGhostTimer => configsAsset.respawnGhostTimer;
+            public float baseSpeed => configsAsset.baseSpeed;
+            public float minSpeed => configsAsset.minSpeed;
 
             public Vector2Int[] GeneratePositions()
             {
@@ -45,7 +49,7 @@ namespace SnakeGame
         public event Action Hit;
         public event Action Moved;
         public event Action PiecesChanged;
-        public event Action<int> SinglePieceChanged;
+        public event Action<int> PieceReplaced;
         public event Action<bool> GhostlyChanged;
 
         private TimerActor ghostlyTimer;
@@ -114,8 +118,16 @@ namespace SnakeGame
         public override void OnMatchStart()
         {
             //throw new System.NotImplementedException();
-            moveTimer = RefreshTimer.CreateAndStart(1 / setup.speed);
+            RefreshSpeed();
         }
+
+        private void RefreshSpeed()
+        {
+            float speed = setup.baseSpeed + _pieces.Sum(p => p.block.speedModifier);
+            speed = Mathf.Max(setup.minSpeed, speed);
+            moveTimer = RefreshTimer.CreateAndStart(1 / speed);
+        }
+
         public override void Tick()
         {
             if(IsAlive && moveTimer.Check())
@@ -194,12 +206,14 @@ namespace SnakeGame
             _pieces.Insert(0, newPiece);
             match.board.AttachPiece(position, newPiece);
             RefreshPieceIndices();
+            RefreshSpeed();
             PiecesChanged?.Invoke();
         }
         public void ReplacePiece(int index, BlockAsset consumedVersion)
         {
             _pieces[index].block = consumedVersion;
-            SinglePieceChanged?.Invoke(index);
+            RefreshSpeed();
+            PieceReplaced?.Invoke(index);
         }
 
         private void RefreshPieceIndices()
@@ -237,6 +251,7 @@ namespace SnakeGame
                 previous = piece;
                 _pieces.Add(piece);
             }
+            RefreshSpeed();
         }
        
     }
