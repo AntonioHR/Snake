@@ -12,7 +12,7 @@ namespace SnakeGame
         public class Setup
         {
             public SnakeConfigsAsset configsAsset;
-            public SnakeTypeAsset snakeTypeAsset;
+            public SnakeTypeAsset snakeTypeAsset { get; set; }
             public Color color = Color.white;
             public Direction startDirection;
             public Vector2Int startPosition;
@@ -167,6 +167,7 @@ namespace SnakeGame
                 match.board.Detatch(piece);
             }
             IsAlive = false;
+            WasHit = false;
             Died?.Invoke();
             owner.OnSnakeDead();
         }

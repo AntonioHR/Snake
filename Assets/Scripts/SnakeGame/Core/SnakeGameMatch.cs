@@ -16,9 +16,9 @@ namespace SnakeGame
             public Vector2Int size = new Vector2Int(15, 10);
             public bool closedByWalls = true;
 
-            public FoodSpawnerActor.Setup[] foodSpawners;
+            public FoodSpawnerActor.Setup[] foodSpawners { get; set; }
             public PlayerActor.Setup[] playersSetup { get; set; }
-            public AISnakeSpawnerActor.Setup[] aiSnakes { get; set; }
+            public AISnakeActor.Setup[] aiSnakes { get; set; }
         }
         #endregion
 

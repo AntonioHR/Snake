@@ -9,8 +9,8 @@ namespace SnakeGame
         public class Setup
         {
             public SnakeActor.Setup snakeSetup;
-            public KeyCode leftKey;
-            public KeyCode rightKey;
+            public KeyCode leftKey { get; set; }
+            public KeyCode rightKey { get; set; }
         }
 
         public SnakeActor snake { get; private set; }

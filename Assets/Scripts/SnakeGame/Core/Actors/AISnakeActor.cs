@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace SnakeGame
 {
-    public class AISnakeSpawnerActor : Actor<AISnakeSpawnerActor.Setup>, ISnakeOwner
+    public class AISnakeActor : Actor<AISnakeActor.Setup>, ISnakeOwner
     {
         public SnakeActor snake { get; private set; }
 
@@ -18,7 +18,7 @@ namespace SnakeGame
         {
             public SnakeActor.Setup snakeSetup;
             public TimerActor.Setup respawnTimer;
-            public int foodSpawnerIndex = 0;
+            public int foodSpawnerIndex { get; set; }
             public float thinkInterval = .1f;
             public bool evadeEnabled = true;
         }

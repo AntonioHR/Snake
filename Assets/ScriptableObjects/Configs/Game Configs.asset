@@ -1,0 +1,51 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 53d6d99688bbe00468a1c0ff2cd34110, type: 3}
+  m_Name: Game Configs
+  m_EditorClassIdentifier: 
+  playerColors:
+  - {r: 0.2867924, g: 0.4741402, b: 1, a: 1}
+  - {r: 0.58146334, g: 1, b: 0.37169808, a: 1}
+  - {r: 0.32452828, g: 1, b: 0.937572, a: 1}
+  - {r: 1, g: 0.24905658, b: 0.8715067, a: 1}
+  - {r: 1, g: 0.8651312, b: 0.22075468, a: 1}
+  maxPlayers: 5
+  boardSize: {x: 20, y: 15}
+  enemySpacing: {x: -1, y: -2}
+  playerSpacing: {x: 1, y: 2}
+  blockOptions:
+  - {fileID: 11400000, guid: c03dbcae147a80648827f12442b55d71, type: 2}
+  - {fileID: 11400000, guid: 8fbfb4c33ee911644b072c8334eb1bf1, type: 2}
+  - {fileID: 11400000, guid: 6ebf81b64d0b2f2418a5b9af56b32d31, type: 2}
+  basePlayerSetup:
+    snakeSetup:
+      configsAsset: {fileID: 11400000, guid: b4a9e6715026f684faf4ce547f4f94fd, type: 2}
+      color: {r: 1, g: 1, b: 1, a: 1}
+      startDirection: 1
+      startPosition: {x: 3, y: 2}
+  snakeTypes:
+  - {fileID: 11400000, guid: 52cd66735d49d4b4992fd1932198f4a8, type: 2}
+  - {fileID: 11400000, guid: cfe519a9f1f8a3e4fb5837d9378df4fc, type: 2}
+  - {fileID: 11400000, guid: d049d079dd201d843bd4ba4812ff12c9, type: 2}
+  - {fileID: 11400000, guid: 74a4b16e3f27ef743a12881949e56ee5, type: 2}
+  - {fileID: 11400000, guid: e8a6222198c1e594295c9e19a9150579, type: 2}
+  aiSnakeType: {fileID: 11400000, guid: 74a4b16e3f27ef743a12881949e56ee5, type: 2}
+  templateAISnake:
+    snakeSetup:
+      configsAsset: {fileID: 11400000, guid: b4a9e6715026f684faf4ce547f4f94fd, type: 2}
+      color: {r: 1, g: 0.29622638, b: 0.29622638, a: 1}
+      startDirection: 3
+      startPosition: {x: 17, y: 13}
+    respawnTimer:
+      defaultDuration: 2
+    thinkInterval: 0.1
+    evadeEnabled: 1
