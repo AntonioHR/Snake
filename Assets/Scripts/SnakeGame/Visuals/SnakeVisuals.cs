@@ -83,7 +83,7 @@ namespace SnakeGame
             //Might do something in the future
             foreach (var piece in pieces)
             {
-                piece.RefreshColors();
+                piece.RefreshVisuals();
             }
         }
 
@@ -93,6 +93,8 @@ namespace SnakeGame
             {
                 piece.RefreshPosition();
             }
+            //Refresh head visuals to move eyes
+            pieces[0].RefreshVisuals();
         }
     }
 }

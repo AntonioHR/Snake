@@ -88,7 +88,7 @@ namespace SnakeGame
         {
             get
             {
-                var result = head.position - head.next.position;
+                var result = head.position - _piecesCache[1].position;
                 //If magnitude is greater than zero, this means it's wrapped around the board
                 if (result.magnitude > 1)
                 {
@@ -286,13 +286,13 @@ namespace SnakeGame
             {
                 SnakeSegmentPiece piece = new SnakeSegmentPiece();
                 piece.snake = this;
-                piece.snakeIndex = i;
                 piece.block = setup.startBlocks[i];
 
                 match.board.AttachPiece(positions[i], piece, canStack:true);
                 previous = piece;
                 _piecesCache.Add(piece);
             }
+            RefreshPieceIndices();
             RefreshPiecePositions();
             RefreshSpeed();
         }

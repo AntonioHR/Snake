@@ -32,14 +32,17 @@ namespace SnakeGame
         {
             this.piece = piece;
             SetPosition(piece.position);
-            RefreshColors();
+            RefreshVisuals();
         }
 
-        public void RefreshColors()
+        public void RefreshVisuals()
         {
             borderSprite.color = GetBorderColor();
             fillSprite.color = GetFillColor();
+            OnRefreshVisuals();
         }
+
+        protected virtual void OnRefreshVisuals() { }
 
         protected virtual void OnInitialize() { }
 

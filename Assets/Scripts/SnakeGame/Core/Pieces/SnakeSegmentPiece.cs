@@ -1,4 +1,7 @@
-﻿namespace SnakeGame
+﻿using System.Linq;
+using UnityEngine;
+
+namespace SnakeGame
 {
     public class SnakeSegmentPiece : Piece
     {
@@ -6,11 +9,15 @@
 
         public SnakeActor snake;
         public int snakeIndex;
-        public override bool IsHazard => !snake.IsGhostly;
+        public override bool IsHazard
+        {
+            get
+            {
+                Debug.Assert(snake.GetPieces().Contains(this), "This check is only valid if this piece is currently used by the actor");
+                return !snake.IsGhostly;
+            }
+        }
         public bool isHead => snakeIndex == 0;
-        public bool isTail => snakeIndex == snake.Length;
-        public SnakeSegmentPiece next => isTail? null : snake[snakeIndex + 1];
-        public SnakeSegmentPiece previous => isHead ? null : snake[snakeIndex - 1];
 
 
 
