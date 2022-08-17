@@ -10,6 +10,8 @@ namespace SnakeGame
     {
         private SnakeGameMatch match;
         private List<SnakeActor> movementQueue = new List<SnakeActor>();
+        private Board boardSnapshot;
+
         private IEnumerable<SnakeSegmentPiece> tailsToMove => movementQueue.Select(q=>q.tail);
 
         public SnakeMover(SnakeGameMatch match)
@@ -26,7 +28,7 @@ namespace SnakeGame
             if(!movementQueue.Any())
                 return;
 
-            Board boardSnapshot = null;
+            boardSnapshot = null;
             
             if(CheckCouldEatTimePowerup())
                 boardSnapshot = match.board.GetSnapshot();
@@ -96,16 +98,32 @@ namespace SnakeGame
             Vector2Int targetPos = snake.head.position + snake.moveDirection;
             targetPos = match.board.WrapPosition(targetPos);
 
-            Piece target = match.board.GetTopPiece(targetPos);
-            if (target is FoodPiece)
+            FoodPiece food = match.board.GetTopPiece(targetPos) as FoodPiece;
+            if (food != null)
             {
-                ExecuteEat(snake, target as FoodPiece);
+                if(food.blockType is TimeTravelBlockAsset)
+                {
+                    ClearFoodPieceFromSnapshot(food.position);
+                    snake.AddTimeTravelSnapshot(boardSnapshot);
+                }
+                ExecuteEat(snake, food);
             } else
             {
                 targetPos = ExecuteMovement(snake, targetPos);
 
             }
         }
+
+        private void ClearFoodPieceFromSnapshot(Vector2Int position)
+        {
+            FoodPiece copyInSnapshot = boardSnapshot
+                                    .GetPiecesAt(position).OfType<FoodPiece>()
+                                    .First();
+            boardSnapshot.Detatch(copyInSnapshot);
+            var foodSpawnerStateInSnapshot = boardSnapshot.GetStateObjectFor<FoodSpawnerState>(copyInSnapshot.spawner);
+            foodSpawnerStateInSnapshot.foodPosition = null;
+        }
+
         private Piece GetTargetPieceFor(SnakeActor snake)
         {
             Vector2Int targetPos = snake.head.position + snake.moveDirection;

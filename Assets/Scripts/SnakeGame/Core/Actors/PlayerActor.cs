@@ -18,6 +18,9 @@ namespace SnakeGame
         public override void OnMatchStart()
         {
         }
+        public override void OnBoardReset()
+        {
+        }
 
         protected override void OnInitialize()
         {
@@ -42,6 +45,7 @@ namespace SnakeGame
         public void OnSnakeDead()
         {
         }
+
     }
 
 }

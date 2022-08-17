@@ -38,6 +38,7 @@ namespace SnakeGame
         {
             InitializeBoard();
             InitializeActors();
+            match.Initialize(setup);
         }
 
         private void InitializeActors()

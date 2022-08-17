@@ -29,6 +29,11 @@ namespace SnakeGame
             foodSpawner = match.GetActors<FoodSpawnerActor>()[setup.foodSpawnerIndex];
         }
 
+        public override void OnBoardReset()
+        {
+            thinkTimer = RefreshTimer.CreateAndStart(setup.thinkInterval);
+        }
+
         protected override void OnInitialize()
         {
             respawnTimer = match.SpawnActor<TimerActor, TimerActor.Setup>(setup.respawnTimer);

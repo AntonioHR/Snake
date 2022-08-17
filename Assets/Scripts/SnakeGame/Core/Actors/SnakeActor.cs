@@ -55,24 +55,34 @@ namespace SnakeGame
         private TimerActor ghostlyTimer;
         private RefreshTimer moveTimer;
 
-        private List<SnakeSegmentPiece> _pieces;
+        private List<SnakeSegmentPiece> _piecesCache;
+        public bool WasHit { get; private set; }
 
-        public SnakeSegmentPiece head => _pieces[0];
-        public SnakeSegmentPiece tail => _pieces[Length - 1];
 
-        public SnakeSegmentPiece this[int i] => _pieces[i];
-        public int Length => _pieces.Count;
+        public bool IsAlive { get => state.isAlive; private set => state.isAlive = value; }
+        public bool IsGhostly { get => state.isGhostly; private set => state.isGhostly = value; }
+
+        public SnakeSegmentPiece head => _piecesCache[0];
+        public SnakeSegmentPiece tail => _piecesCache[Length - 1];
+
+        public SnakeSegmentPiece this[int i] => _piecesCache[i];
+        public int Length => _piecesCache.Count;
 
         public Color Color => setup.color;
         public ISnakeOwner owner { get; set; }
 
-        public IEnumerable<SnakeSegmentPiece> GetPieces() => _pieces.AsReadOnly();
+        public IEnumerable<SnakeSegmentPiece> GetPieces() => _piecesCache.AsReadOnly();
 
         
 
-        public Vector2Int moveDirection { get; private set; }
+        public Vector2Int moveDirection { get => state.moveDirection; private set => state.moveDirection = value; }
 
         private Vector2Int startPosition;
+
+        public Board GetTopRewindBoard()
+        {
+            return state.timeTravelBoards.Last();
+        }
 
         public Vector2Int lookVector
         {
@@ -90,6 +100,11 @@ namespace SnakeGame
             }
         }
 
+        public void AddTimeTravelSnapshot(Board boardSnapshot)
+        {
+            state.timeTravelBoards.Add(boardSnapshot);
+        }
+
         public IEnumerable<Vector2Int> GetDirectionOptions()=> new[] { lookVector, lookVector.SpinClockwise(), lookVector.SpinCounterclockwise() };
         public IEnumerable<Vector2Int> GetWrappedMovementOptions()
         {
@@ -100,16 +115,20 @@ namespace SnakeGame
             });
         }
 
-        public bool WasHit { get; private set; }
-        public bool IsAlive { get; private set; }
-        public bool IsGhostly { get; private set; }
-        
-        
+
+        private SnakeActorState state;
+
+
+
         protected override void OnInitialize()
         {
+            state = new SnakeActorState(this);
+            match.board.AddStateObject(state);
+
             moveDirection = setup.startDirection.ToVector();
             startPosition = setup.startPosition;
             ghostlyTimer = match.SpawnActor<TimerActor, TimerActor.Setup>(setup.respawnGhostTimer);
+
             IsAlive = true;
 
             BuildSnake();
@@ -121,9 +140,27 @@ namespace SnakeGame
             RefreshSpeed();
         }
 
+        public override void OnBoardReset()
+        {
+            state = match.board.GetStateObjectFor<SnakeActorState>(this);
+            //We find our pieces on the new board state via their positions
+            if (IsAlive)
+            {
+                _piecesCache = state.piecePositions
+                    .Select(pos =>
+                        match.board.GetPiecesAt(pos)
+                        .OfType<SnakeSegmentPiece>()
+                        .Where(p => p.snake == this).First())
+                    .ToList();
+                RefreshSpeed();
+
+                PiecesChanged?.Invoke();
+            }
+        }
+
         private void RefreshSpeed()
         {
-            float speed = setup.baseSpeed + _pieces.Sum(p => p.block.speedModifier);
+            float speed = setup.baseSpeed + _piecesCache.Sum(p => p.block.speedModifier);
             speed = Mathf.Max(setup.minSpeed, speed);
             moveTimer = RefreshTimer.CreateAndStart(1 / speed);
         }
@@ -145,7 +182,8 @@ namespace SnakeGame
 
         public void RespawnAt(Vector2Int startPosition)
         {
-            _pieces.Clear();
+            _piecesCache.Clear();
+            state.piecePositions.Clear();
             moveTimer.Restart();
             this.startPosition = startPosition;
             this.moveDirection = setup.startDirection.ToVector();
@@ -162,10 +200,11 @@ namespace SnakeGame
         }
         public void OnDead()
         {
-            foreach (var piece in _pieces)
+            foreach (var piece in _piecesCache)
             {
                 match.board.Detatch(piece);
             }
+            state.piecePositions.Clear();
             IsAlive = false;
             WasHit = false;
             Died?.Invoke();
@@ -173,6 +212,7 @@ namespace SnakeGame
         }
         public void OnMoved()
         {
+            RefreshPiecePositions();
             Moved?.Invoke();
         }
 
@@ -204,7 +244,8 @@ namespace SnakeGame
             newPiece.block = type;
             newPiece.snake = this;
             newPiece.snakeIndex = 0;
-            _pieces.Insert(0, newPiece);
+            _piecesCache.Insert(0, newPiece);
+            state.piecePositions.Insert(0, position);
             match.board.AttachPiece(position, newPiece);
             RefreshPieceIndices();
             RefreshSpeed();
@@ -212,16 +253,16 @@ namespace SnakeGame
         }
         public void ReplacePiece(int index, BlockAsset consumedVersion)
         {
-            _pieces[index].block = consumedVersion;
+            _piecesCache[index].block = consumedVersion;
             RefreshSpeed();
             PieceReplaced?.Invoke(index);
         }
 
         private void RefreshPieceIndices()
         {
-            for (int i = 0; i < _pieces.Count; i++)
+            for (int i = 0; i < _piecesCache.Count; i++)
             {
-                _pieces[i].snakeIndex = i;
+                _piecesCache[i].snakeIndex = i;
             }
         }
 
@@ -238,7 +279,7 @@ namespace SnakeGame
             Debug.Assert(setup.startBlocks.Length > 0);
             Vector2Int[] positions = setup.GeneratePositions();
 
-            _pieces = new List<SnakeSegmentPiece>();
+            _piecesCache = new List<SnakeSegmentPiece>();
             SnakeSegmentPiece previous = null;
 
             for (int i = 0; i < positions.Length; i++)
@@ -250,11 +291,16 @@ namespace SnakeGame
 
                 match.board.AttachPiece(positions[i], piece, canStack:true);
                 previous = piece;
-                _pieces.Add(piece);
+                _piecesCache.Add(piece);
             }
+            RefreshPiecePositions();
             RefreshSpeed();
         }
-       
+
+        private void RefreshPiecePositions()
+        {
+            state.piecePositions = _piecesCache.Select(p => p.position).ToList();
+        }
     }
 
 }

@@ -16,7 +16,7 @@
 
         public override object Clone()
         {
-            return this.MemberwiseClone();
+            return MemberwiseClone();
         }
     }
 }

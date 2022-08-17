@@ -12,7 +12,7 @@ namespace SnakeGame
 
         private List<Piece>[,] pieces;
 
-        private List<BoardStateObject> stateObjects = new List<BoardStateObject>();
+        private Dictionary<Actor, ActorStateObject> stateObjects = new Dictionary<Actor, ActorStateObject>();
 
         public Vector2Int Size { get; private set; }
 
@@ -55,16 +55,16 @@ namespace SnakeGame
                 for (int j = 0; j < Size.y; j++)
                 {
                     result.pieces[i, j] = new List<Piece>();
-                    foreach (var piece in result.pieces[i,j])
+                    foreach (var piece in pieces[i,j])
                     {
                         result.pieces[i, j].Add((Piece)piece.Clone());
                     }
                 }
             }
-            result.stateObjects = new List<BoardStateObject>();
+            result.stateObjects = new Dictionary<Actor, ActorStateObject>();
             foreach (var item in stateObjects)
             {
-                result.stateObjects.Add(item);
+                result.stateObjects.Add(item.Key, (ActorStateObject) item.Value.Clone());
             }
 
             return result;
@@ -125,11 +125,15 @@ namespace SnakeGame
                 OccupiedSlots--;
         }
 
-        public void AddStateObject(BoardStateObject stateObject)
+        public void AddStateObject(ActorStateObject stateObject)
         {
-            stateObjects.Add(stateObject);
+            stateObjects.Add(stateObject.owner, stateObject);
         }
-        public IEnumerable<T> GetStateObjects<T>() where T: BoardStateObject
+        public T GetStateObjectFor<T>(Actor actor) where T: ActorStateObject
+        {
+            return (T)stateObjects[actor];
+        }
+        public IEnumerable<T> GetStateObjects<T>() where T: ActorStateObject
         {
             return stateObjects.OfType<T>();
         }

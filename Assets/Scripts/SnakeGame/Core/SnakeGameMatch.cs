@@ -15,6 +15,8 @@ namespace SnakeGame
         {
             public Vector2Int size = new Vector2Int(15, 10);
             public bool closedByWalls = true;
+            public float rewindWait = 1;
+            public bool aiRewindEnabled = true;
 
             public FoodSpawnerActor.Setup[] foodSpawners { get; set; }
             public PlayerActor.Setup[] playersSetup { get; set; }
@@ -24,6 +26,8 @@ namespace SnakeGame
 
         //Events
         public event Action GameOver;
+        public event Action RewindStarted;
+        public event Action RewindFinished;
         public event Action<FoodPiece> FoodEaten;
 
         //State
@@ -53,10 +57,15 @@ namespace SnakeGame
 
         #endregion
 
-
+        public void Initialize(Setup setup)
+        {
+            this.setup = setup;
+        }
         public void OnHitsHappened()
         {
             bool playerDead = false;
+
+            List<SnakeActor> rewindOptions = new List<SnakeActor>();
             foreach (var snake in GetActors<SnakeActor>())
             {
                 if(snake.WasHit)
@@ -65,12 +74,29 @@ namespace SnakeGame
                     {
                         playerDead = true;
                     }
+                    bool hasRewind = snake.GetPieces().Any(p=>p.block is TimeTravelBlockAsset);
+                    if (hasRewind && (snake.owner is PlayerActor || setup.aiRewindEnabled))
+                    {
+                        rewindOptions.Add(snake);
+                    }
 
                     snake.OnDead();
                 }
             }
-            if(playerDead)
+
+            if (rewindOptions.Any())
+            {
+                var chosenSnake = rewindOptions.OrderBy(_ => UnityEngine.Random.value).First();
+
+                Board targetBoard = chosenSnake.GetTopRewindBoard();
+
+                stateMachine.CurrentState.OnRewindTrigger(targetBoard);
+
+            }
+            else if (playerDead)
+            {
                 stateMachine.CurrentState.OnAfterPlayerDeath();
+            }
         }
 
         public void OnPieceEaten(FoodPiece foodPiece)

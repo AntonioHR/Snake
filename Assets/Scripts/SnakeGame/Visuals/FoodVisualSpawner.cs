@@ -17,8 +17,18 @@ namespace SnakeGame
 
             actor.FoodConsumed += OnFoodConsumedOnBoard;
             actor.FoodSpawned += OnFoodSpawnedOnBoard;
+            actor.FoodReset += OnFoodResetOnBoard;
             if(actor.currentFood != null)
                 SpawnFood();
+        }
+
+        private void OnFoodResetOnBoard()
+        {
+            DespawnFood();
+            if(actor.currentFood != null)
+            {
+                SpawnFood();
+            }
         }
 
         private void OnFoodSpawnedOnBoard()

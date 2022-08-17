@@ -1,4 +1,5 @@
-﻿using JammerTools.StateMachines;
+﻿using JammerTools.Common;
+using JammerTools.StateMachines;
 using System;
 using System.Collections;
 using System.Linq;
@@ -24,6 +25,11 @@ namespace SnakeGame
             }
 
             public virtual void OnAfterPlayerDeath()
+            {
+                throw new InvalidOperationException();
+            }
+
+            public virtual void OnRewindTrigger(Board targetBoard)
             {
                 throw new InvalidOperationException();
             }
@@ -60,7 +66,49 @@ namespace SnakeGame
                     ExitTo(new GameEndedState());
                 }
             }
+            public override void OnRewindTrigger(Board targetBoard)
+            {
+                ExitTo(new RewindState(targetBoard));
+            }
         }
+
+        public class RewindState : State
+        {
+            Board target;
+            private Timer timer;
+
+            public RewindState(Board target)
+            {
+                this.target = target;
+            }
+            protected override void Begin()
+            {
+                Context.RewindStarted?.Invoke();
+                timer = Timer.CreateAndStart();
+            }
+            public override void Update()
+            {
+                if(timer.ElapsedSeconds > Context.setup.rewindWait)
+                {
+                    Context.ResetToBoard(target);
+                    ExitTo(new BoardActiveState());
+                }
+            }
+            protected override void End()
+            {
+                Context.RewindFinished?.Invoke();
+            }
+        }
+
+        private void ResetToBoard(Board target)
+        {
+            this.board = target;
+            foreach (var actor in actors)
+            {
+                actor.OnBoardReset();
+            }
+        }
+
         public class GameEndedState : State
         {
             protected override void Begin()

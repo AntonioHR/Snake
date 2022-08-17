@@ -6,11 +6,13 @@ namespace SnakeGame
     public abstract class Actor : MonoBehaviour
     {
         public abstract void OnMatchStart();
+        public abstract void OnBoardReset();
         public virtual void Tick() { }
 
 
         ///Should not implement Update on Actors, use Tick() instead
         protected void Update() { }
+
     }
 
     public abstract class Actor<T> : Actor

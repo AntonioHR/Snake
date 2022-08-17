@@ -27,10 +27,14 @@ namespace SnakeGame
         public override void OnMatchStart()
         {
         }
+        public override void OnBoardReset()
+        {
+            state = match.board.GetStateObjectFor<TimerState>(this);
+        }
 
         protected override void OnInitialize()
         {
-            state = new TimerState();
+            state = new TimerState(this);
             match.board.AddStateObject(state);
         }
 
