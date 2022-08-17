@@ -37,7 +37,6 @@ MonoBehaviour:
   - {fileID: 11400000, guid: cfe519a9f1f8a3e4fb5837d9378df4fc, type: 2}
   - {fileID: 11400000, guid: d049d079dd201d843bd4ba4812ff12c9, type: 2}
   - {fileID: 11400000, guid: 74a4b16e3f27ef743a12881949e56ee5, type: 2}
-  - {fileID: 11400000, guid: e8a6222198c1e594295c9e19a9150579, type: 2}
   aiSnakeType: {fileID: 11400000, guid: 74a4b16e3f27ef743a12881949e56ee5, type: 2}
   templateAISnake:
     snakeSetup:
