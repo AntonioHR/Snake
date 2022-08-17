@@ -6,19 +6,24 @@ namespace SnakeGame
 {
     public class MatchBuilder : MonoBehaviour
     {
+        public SnakeGameMatch.Setup setup;
         public Transform matchTarget;
         public BoardVisuals visuals;
         public SnakeUI ui;
-
-
+        private GameConfigs configs;
         private SnakeGameMatch match;
-        private SnakeGameMatch.Setup setup;
         private Transform actorsParent;
 
-        public SnakeGameMatch Build(SnakeGameMatch.Setup setup)
+        public SnakeGameMatch Build(GameConfigs configs, PlayerActor.Setup[] players)
         {
+            this.configs = configs;
             match = matchTarget.gameObject.AddComponent<SnakeGameMatch>();
-            this.setup = setup;
+
+            setup.size = configs.boardSize;
+            setup.playersSetup = players;
+            setup.aiSnakes = GetSnakes(players.Length);
+            setup.foodSpawners = GetFoodSpawners(players.Length);
+
             InitializeMatch();
             InitializeVisuals();
             IntializeUI();
@@ -60,6 +65,48 @@ namespace SnakeGame
         private void InitializeBoard()
         {
             match.board = Board.BuildWithSize(setup.size, setup.closedByWalls);
+        }
+
+
+        private FoodSpawnerActor.Setup[] GetFoodSpawners(int length)
+        {
+            var result = new FoodSpawnerActor.Setup[length];
+            for (int i = 0; i < length; i++)
+            {
+                result[i] = new FoodSpawnerActor.Setup()
+                {
+                    blockAssetOptions = configs.blockOptions
+                };
+            }
+            return result;
+        }
+
+        private AISnakeActor.Setup[] GetSnakes(int length)
+        {
+            AISnakeActor.Setup template = configs.templateAISnake;
+            var result = new AISnakeActor.Setup[length];
+            for (int i = 0; i < length; i++)
+            {
+                result[i] = new AISnakeActor.Setup()
+                {
+                    evadeEnabled = template.evadeEnabled,
+                    foodSpawnerIndex = i,
+                    respawnTimer = new TimerActor.Setup()
+                    {
+                        defaultDuration = template.respawnTimer.defaultDuration
+                    },
+                    snakeSetup = new SnakeActor.Setup()
+                    {
+                        color = template.snakeSetup.color,
+                        configsAsset = template.snakeSetup.configsAsset,
+                        snakeTypeAsset = configs.aiSnakeType,
+                        startDirection = template.snakeSetup.startDirection,
+                        startPosition = template.snakeSetup.startPosition + configs.enemySpacing * i
+                    },
+                    thinkInterval = template.thinkInterval
+                };
+            }
+            return result;
         }
     }
 }

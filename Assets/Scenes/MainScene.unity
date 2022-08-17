@@ -717,6 +717,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 731517ed75805834caf1f87739b84da3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  setup:
+    size: {x: 30, y: 20}
+    closedByWalls: 0
+    rewindWait: 1
+    aiRewindEnabled: 1
   matchTarget: {fileID: 1191791810}
   visuals: {fileID: 1216907640}
   ui: {fileID: 1196339661}
@@ -735,20 +740,6 @@ MonoBehaviour:
   configs: {fileID: 11400000, guid: a3847dafc737d1a41925f5fe4e44e1c6, type: 2}
   matchBuilder: {fileID: 588069895}
   pregameUI: {fileID: 1951428728}
-  setup:
-    size: {x: 30, y: 20}
-    closedByWalls: 0
-  aiSnakes:
-  - snakeSetup:
-      configsAsset: {fileID: 11400000, guid: b4a9e6715026f684faf4ce547f4f94fd, type: 2}
-      color: {r: 0.745283, g: 0, b: 0, a: 1}
-      startDirection: 3
-      startPosition: {x: 10, y: 7}
-    respawnTimer:
-      defaultDuration: 3
-    thinkInterval: 0.1
-    evadeEnabled: 0
-  autoStart: 0
 --- !u!4 &588069897
 Transform:
   m_ObjectHideFlags: 0
